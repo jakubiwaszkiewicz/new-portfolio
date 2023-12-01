@@ -1,28 +1,30 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import Home from './pages/Home';
+import React from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
+
 import {
   createBrowserRouter,
   RouterProvider,
   Outlet,
   defer,
-  useLocation
+  useLocation,
 } from "react-router-dom";
-import Header from './components/Header';
-import Footer from './components/Footer';
-import Portfolio from './pages/Portfolio';
-import bgImage from './assets/bg.png';
-import Project from './pages/Project';
-import FooterAlt from './components/FooterAlt';
 
-// data for tests 
+import Home from "./pages/Home";
+import Header from "./components/Header";
+import Footer from "./components/Footer";
+import Portfolio from "./pages/Portfolio";
+import bgImage from "./assets/bg.png";
+import Project from "./pages/Project";
+import FooterAlt from "./components/FooterAlt";
 
-const API_EXP_URL = `${process.env.REACT_APP_API_URL_EXP}?populate=*`;
-const API_ABOUT_URL = `${process.env.REACT_APP_API_URL_ABOUT}?populate=*`;
-const API_ABOUT_PROJECTS = `${process.env.REACT_APP_API_URL_PROJECTS}?populate=*`;
+// data for tests
+const API_EXP_URL = process.env.REACT_APP_API_URL_EXP;
+const API_ABOUT_URL = process.env.REACT_APP_API_URL_ABOUT;
+const API_PROJECTS_URL = process.env.REACT_APP_API_URL_PROJECTS;
+const API_TOKEN = process.env.REACT_APP_API_KEY;
 
-const classNameString =`
+const classNameString = `
     text-white
     h-screen
     snap-y
@@ -35,80 +37,128 @@ const classNameString =`
     scroll-smooth
   `;
 
-  const appStyles = {
-    background: `url(${bgImage})`,
-    backgroundSize: 'cover',
-    backgroundRepeat: 'no-repeat',
-    backgroundPosition: 'center',
-    backgroundAttachment: 'fixed',
-  };
+const appStyles = {
+  background: `url(${bgImage})`,
+  backgroundSize: "cover",
+  backgroundRepeat: "no-repeat",
+  backgroundPosition: "center",
+  backgroundAttachment: "fixed",
+};
 
 const Layout = () => {
-
   const location = useLocation();
-  const isHome = location.pathname === '/';
-  
+  const isHome = location.pathname === "/";
+
   return (
     <div className={classNameString} style={appStyles}>
-      <Header/>
-      <Outlet/>
-      {isHome ? <FooterAlt/> : <Footer/> }
-    </div> 
-  )
-}
+      <Header />
+      <Outlet />
+      {isHome ? <FooterAlt /> : <Footer />}
+    </div>
+  );
+};
 
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Layout/>,
+    element: <Layout />,
     children: [
       {
         path: "/",
-        element: <Home/>,
+        element: <Home />,
         loader: async ({ request, params }) => {
-          let aboutDataAPI = await fetch(API_ABOUT_URL)
-          let expDataAPI = await fetch(API_EXP_URL)
-          if (!aboutDataAPI.ok) throw new Error(await aboutDataAPI.text())
-          if (!expDataAPI.ok) throw new Error(await expDataAPI.text())
-          aboutDataAPI = await aboutDataAPI.json()
-          expDataAPI = await expDataAPI.json()
+          let aboutData = await fetch(API_ABOUT_URL, {
+            headers: {
+              "X-Auth-Token": API_TOKEN,
+            },
+          });
+          let expData = await fetch(API_EXP_URL, {
+            headers: {
+              "X-Auth-Token": API_TOKEN,
+            },
+          });
+
+          if (!aboutData.ok) throw new Error(await aboutData.text());
+          if (!expData.ok) throw new Error(await expData.text());
+          aboutData = await aboutData.json();
+          expData = await expData.json();
+
+          await expData.data.forEach(async (project) => {
+            project.loadedImages = [];
+            await project.image.forEach(async (image) => {
+              let loadedImage = await fetch(
+                `https://api.flotiq.com${image.dataUrl}`,
+                {
+                  headers: {
+                    "X-Auth-Token": API_TOKEN,
+                  },
+                }
+              );
+              let loadedImageData = await loadedImage.json();
+              project.loadedImages.push(loadedImageData.url);
+            });
+          });
+
+          aboutData.data[0].loadedImages = [];
+          for (let image of aboutData.data[0].photos) {
+            let loadedImage = await fetch(
+              `https://api.flotiq.com${image.dataUrl}`,
+              {
+                headers: {
+                  "X-Auth-Token": API_TOKEN,
+                },
+              }
+            );
+            let loadedImageData = await loadedImage.json();
+            aboutData.data[0].loadedImages.push(loadedImageData.url);
+          }
+
           return defer({
-            results: {aboutDataAPI, expDataAPI}
-          })
-        }
+            results: { aboutData, expData },
+          });
+        },
       },
       {
         path: "/projects",
-        element: <Portfolio/>,
+        element: <Portfolio />,
         loader: async ({ request, params }) => {
-          let dataProjectsAPI = await fetch(API_ABOUT_PROJECTS)
-          if (!dataProjectsAPI.ok) throw new Error(await dataProjectsAPI.text())
-          dataProjectsAPI = await dataProjectsAPI.json()
+          let dataProjectsAPI = await fetch(API_PROJECTS_URL, {
+            headers: {
+              "X-Auth-Token": API_TOKEN,
+            },
+          });
+          if (!dataProjectsAPI.ok)
+            throw new Error(await dataProjectsAPI.text());
+          dataProjectsAPI = await dataProjectsAPI.json();
           return defer({
-            results: {dataProjectsAPI}
-          })
-        }
+            results: { dataProjectsAPI },
+          });
+        },
       },
       {
         path: "/project/:id",
-        element: <Project/>,
+        element: <Project />,
         loader: async ({ request, params }) => {
-          let dataProjectsAPI = await fetch(API_ABOUT_PROJECTS)
-          if (!dataProjectsAPI.ok) throw new Error(await dataProjectsAPI.text())
-          dataProjectsAPI = await dataProjectsAPI.json()
+          let dataProjectsAPI = await fetch(API_PROJECTS_URL, {
+            headers: {
+              "X-Auth-Token": API_TOKEN,
+            },
+          });
+          if (!dataProjectsAPI.ok)
+            throw new Error(await dataProjectsAPI.text());
+          dataProjectsAPI = await dataProjectsAPI.json();
           return defer({
-            results: {dataProjectsAPI}
-          })
-        }
+            results: { dataProjectsAPI },
+          });
+        },
       },
-    ]
+    ],
   },
 ]);
 
-const root = ReactDOM.createRoot(document.getElementById('root'));
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
-    <RouterProvider router={router}/>
+    <RouterProvider router={router} />
   </React.StrictMode>
 );
-

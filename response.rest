@@ -1,0 +1,12 @@
+
+GET https://api.flotiq.com/api/v1/content/data_project
+X-Auth-Token: 6437a303c45fd3740e5100d142706bdc
+
+###
+
+GET https://api.flotiq.com/api/v1/content/_media/_media-9fc53f59-f9f1-4e45-902d-6b3b51567c83
+X-Auth-Token: 6437a303c45fd3740e5100d142706bdc
+
+###
+
+GET https://api.flotiq.com/image/0x0/_media-9fc53f59-f9f1-4e45-902d-6b3b51567c83.png

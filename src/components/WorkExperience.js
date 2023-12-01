@@ -1,12 +1,11 @@
-import React from 'react';
-import ExpCard from './ExpCard';
-import { motion } from 'framer-motion';
+import React from "react";
+import ExpCard from "./ExpCard";
 function WorkExperience({ expData, expDataAPI }) {
-
-    const API_URL = process.env.REACT_APP_API_URL;
-    return (
-        <div>
-            <div className='
+  const API_URL = process.env.REACT_APP_API_URL;
+  return (
+    <div>
+      <div
+        className="
                 h-screen
                 relative
                 flex
@@ -18,14 +17,11 @@ function WorkExperience({ expData, expDataAPI }) {
                 justify-evenly
                 mx-auto
                 items-center
-                z-0'
-            >
-                <h1 className='sectionTitle'>
-                    &nbsp;Experience
-                </h1>
-                <div
-                    
-                    className='
+                z-0"
+      >
+        <h1 className="sectionTitle">&nbsp;Experience</h1>
+        <div
+          className="
                         relative
                         w-full
                         flex
@@ -37,21 +33,24 @@ function WorkExperience({ expData, expDataAPI }) {
                         scrollbar
                         scrollbar-track-gray-400/20
                         scrollbar-thumb-[#ffffff]
-                        mt-10'
-                        
-                >
-                    {expDataAPI.data.map((item) => (
-                        <ExpCard
-                            key={item.id}
-                            img={`${API_URL}${item.attributes.image.data.attributes.formats.large?.url || item.attributes.image.data.attributes.formats.small.url}`}
-                            title={item.attributes.title}
-                            date={item.attributes.date}
-                            whatHaveIDoneHere={item.attributes.description}
-                        />))}
-                </div>
-            </div>
+                        mt-10"
+        >
+          {expDataAPI.data.map((item) => (
+            <ExpCard
+              key={item.id}
+              img={`${API_URL}${
+                item.attributes.image.data.attributes.formats.large?.url ||
+                item.attributes.image.data.attributes.formats.small.url
+              }`}
+              title={item.attributes.title}
+              date={item.attributes.date}
+              whatHaveIDoneHere={item.attributes.description}
+            />
+          ))}
         </div>
-    );
+      </div>
+    </div>
+  );
 }
 
 export default WorkExperience;
