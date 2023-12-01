@@ -67,25 +67,32 @@ const router = createBrowserRouter([
         path: "/",
         element: <Home />,
         loader: async ({ request, params }) => {
+          // fetch data from API
           let aboutData = await fetch(API_ABOUT_URL, {
             headers: {
               "X-Auth-Token": API_TOKEN,
             },
           });
+
           let expData = await fetch(API_EXP_URL, {
             headers: {
               "X-Auth-Token": API_TOKEN,
             },
           });
 
+          // check if data is ok
           if (!aboutData.ok) throw new Error(await aboutData.text());
           if (!expData.ok) throw new Error(await expData.text());
+
+          // parse data
           aboutData = await aboutData.json();
           expData = await expData.json();
 
+          // load images
+
           await expData.data.forEach(async (project) => {
             project.loadedImages = [];
-            await project.image.forEach(async (image) => {
+            for (let image of project.image) {
               let loadedImage = await fetch(
                 `https://api.flotiq.com${image.dataUrl}`,
                 {
@@ -96,7 +103,7 @@ const router = createBrowserRouter([
               );
               let loadedImageData = await loadedImage.json();
               project.loadedImages.push(loadedImageData.url);
-            });
+            }
           });
 
           aboutData.data[0].loadedImages = [];
@@ -127,6 +134,7 @@ const router = createBrowserRouter([
               "X-Auth-Token": API_TOKEN,
             },
           });
+
           if (!dataProjectsAPI.ok)
             throw new Error(await dataProjectsAPI.text());
           dataProjectsAPI = await dataProjectsAPI.json();

@@ -1,7 +1,9 @@
 import React from "react";
 import ExpCard from "./ExpCard";
-function WorkExperience({ expData, expDataAPI }) {
+function WorkExperience({ expData }) {
   const API_URL = process.env.REACT_APP_API_URL;
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
   return (
     <div>
       <div
@@ -35,16 +37,13 @@ function WorkExperience({ expData, expDataAPI }) {
                         scrollbar-thumb-[#ffffff]
                         mt-10"
         >
-          {expDataAPI.data.map((item) => (
+          {expData.data.map((project) => (
             <ExpCard
-              key={item.id}
-              img={`${API_URL}${
-                item.attributes.image.data.attributes.formats.large?.url ||
-                item.attributes.image.data.attributes.formats.small.url
-              }`}
-              title={item.attributes.title}
-              date={item.attributes.date}
-              whatHaveIDoneHere={item.attributes.description}
+              key={project.id || ""}
+              img={`${API_BASE_URL}${project.loadedImages[0]}` || ""}
+              title={project.title || ""}
+              date={project.date || ""}
+              list={project.list || ""}
             />
           ))}
         </div>

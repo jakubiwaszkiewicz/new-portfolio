@@ -1,7 +1,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 
-function ExpCard({ img, whatHaveIDoneHere, title, date }) {
+function ExpCard({ img, list, title, date }) {
   return (
     <motion.div
       initial={{
@@ -67,7 +67,7 @@ function ExpCard({ img, whatHaveIDoneHere, title, date }) {
           Date: {date}
         </motion.span>
 
-        <motion.pre
+        <motion.div
           initial={{
             opacity: 0,
           }}
@@ -89,8 +89,16 @@ function ExpCard({ img, whatHaveIDoneHere, title, date }) {
                     scrollbar-track-gray-400/20
                     scrollbar-thumb-[#ffffff]"
         >
-          {whatHaveIDoneHere}
-        </motion.pre>
+          <ul>
+            {list.map((element) => {
+              return (
+                <li key={element.element} className="list-disc">
+                  {element.element}
+                </li>
+              );
+            })}
+          </ul>
+        </motion.div>
       </div>
     </motion.div>
   );

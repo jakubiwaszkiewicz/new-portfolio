@@ -17,8 +17,6 @@ const API_TOKEN = process.env.REACT_APP_API_KEY;
 function Home() {
   const { aboutData, expData } = useLoaderData().results;
 
-  console.log(aboutData);
-  console.log(expData);
   return (
     <div>
       <section id="hero" className="snap-start">
@@ -32,27 +30,27 @@ function Home() {
         />
       </section>
 
-      {/* {About} */}
-      {/* <section id="about" className="snap-center">
+      {/* About */}
+      <section id="about" className="snap-center">
         <About
           photo={`https://api.flotiq.com${
             aboutData.data[0].loadedImages[0] ?? ""
           }`}
-          desc={aboutData.description}
+          desc={aboutData.data[0].description ?? ""}
         />
-      </section> */}
-
-      {/* {Experience} */}
-      {/* <section id="experience" className="snap-center">
-        <WorkExperience expDataAPI={expData} />
       </section>
 
-      {/* {Projects} */}
-      {/* <section id="projects" className="snap-start">
+      {/* Experience */}
+      <section id="experience" className="snap-center">
+        <WorkExperience expData={expData} />
+      </section>
+
+      {/* Projects */}
+      <section id="projects" className="snap-start">
         <Projects />
       </section>
 
-      {/* {Contact Me} */}
+      {/* Contact Me */}
       {/*<section id="contact" className="snap-start">
         <ContactMe data={expData.data[0] ? expData.data[0] : ""} />
       </section> */}
