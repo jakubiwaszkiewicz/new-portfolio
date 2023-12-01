@@ -89,7 +89,6 @@ const router = createBrowserRouter([
           expData = await expData.json();
 
           // load images
-
           await expData.data.forEach(async (project) => {
             project.loadedImages = [];
             for (let image of project.image) {
@@ -129,17 +128,33 @@ const router = createBrowserRouter([
         path: "/projects",
         element: <Portfolio />,
         loader: async ({ request, params }) => {
-          let dataProjectsAPI = await fetch(API_PROJECTS_URL, {
+          let dataProjects = await fetch(API_PROJECTS_URL, {
             headers: {
               "X-Auth-Token": API_TOKEN,
             },
           });
 
-          if (!dataProjectsAPI.ok)
-            throw new Error(await dataProjectsAPI.text());
-          dataProjectsAPI = await dataProjectsAPI.json();
+          if (!dataProjects.ok) throw new Error(await dataProjects.text());
+          dataProjects = await dataProjects.json();
+
+          await dataProjects.data.forEach(async (project) => {
+            project.loadedImages = [];
+            for (let image of project.image) {
+              let loadedImage = await fetch(
+                `https://api.flotiq.com${image.dataUrl}`,
+                {
+                  headers: {
+                    "X-Auth-Token": API_TOKEN,
+                  },
+                }
+              );
+              let loadedImageData = await loadedImage.json();
+              project.loadedImages.push(loadedImageData.url);
+            }
+          });
+
           return defer({
-            results: { dataProjectsAPI },
+            results: { dataProjects },
           });
         },
       },
@@ -147,16 +162,34 @@ const router = createBrowserRouter([
         path: "/project/:id",
         element: <Project />,
         loader: async ({ request, params }) => {
-          let dataProjectsAPI = await fetch(API_PROJECTS_URL, {
+          let dataProjects = await fetch(API_PROJECTS_URL, {
             headers: {
               "X-Auth-Token": API_TOKEN,
             },
           });
-          if (!dataProjectsAPI.ok)
-            throw new Error(await dataProjectsAPI.text());
-          dataProjectsAPI = await dataProjectsAPI.json();
+          if (!dataProjects.ok) throw new Error(await dataProjects.text());
+          dataProjects = await dataProjects.json();
+
+          await dataProjects.data.forEach(async (project) => {
+            project.loadedImages = [];
+            for (let image of project.image) {
+              while (!image.dataUrl) {
+                let loadedImage = await fetch(
+                  `https://api.flotiq.com${image.dataUrl}`,
+                  {
+                    headers: {
+                      "X-Auth-Token": API_TOKEN,
+                    },
+                  }
+                );
+                let loadedImageData = await loadedImage.json();
+                project.loadedImages.push(loadedImageData.url);
+              }
+            }
+          });
+
           return defer({
-            results: { dataProjectsAPI },
+            results: { dataProjects },
           });
         },
       },
