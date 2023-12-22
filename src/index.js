@@ -136,8 +136,7 @@ const router = createBrowserRouter([
 
           if (!dataProjects.ok) throw new Error(await dataProjects.text());
           dataProjects = await dataProjects.json();
-
-          await dataProjects.data.forEach(async (project) => {
+          for (let project of dataProjects.data) {
             project.loadedImages = [];
             for (let image of project.image) {
               let loadedImage = await fetch(
@@ -151,7 +150,7 @@ const router = createBrowserRouter([
               let loadedImageData = await loadedImage.json();
               project.loadedImages.push(loadedImageData.url);
             }
-          });
+          }
 
           return defer({
             results: { dataProjects },
@@ -162,31 +161,29 @@ const router = createBrowserRouter([
         path: "/project/:id",
         element: <Project />,
         loader: async ({ request, params }) => {
-          let dataProjects = await fetch(API_PROJECTS_URL, {
+          let dataProjects = await fetch(`${API_PROJECTS_URL}/`, {
             headers: {
               "X-Auth-Token": API_TOKEN,
             },
           });
+
           if (!dataProjects.ok) throw new Error(await dataProjects.text());
           dataProjects = await dataProjects.json();
-
-          await dataProjects.data.forEach(async (project) => {
+          for (let project of dataProjects.data) {
             project.loadedImages = [];
             for (let image of project.image) {
-              while (!image.dataUrl) {
-                let loadedImage = await fetch(
-                  `https://api.flotiq.com${image.dataUrl}`,
-                  {
-                    headers: {
-                      "X-Auth-Token": API_TOKEN,
-                    },
-                  }
-                );
-                let loadedImageData = await loadedImage.json();
-                project.loadedImages.push(loadedImageData.url);
-              }
+              let loadedImage = await fetch(
+                `https://api.flotiq.com${image.dataUrl}`,
+                {
+                  headers: {
+                    "X-Auth-Token": API_TOKEN,
+                  },
+                }
+              );
+              let loadedImageData = await loadedImage.json();
+              project.loadedImages.push(loadedImageData.url);
             }
-          });
+          }
 
           return defer({
             results: { dataProjects },

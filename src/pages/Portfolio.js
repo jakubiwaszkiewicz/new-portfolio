@@ -5,9 +5,9 @@ import ImageIcon from "@mui/icons-material/Image";
 
 export default function Portfolio() {
   const API_URL = process.env.REACT_APP_API_URL;
+  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
-  let { dataProjectsAPI } = useLoaderData().results;
-  dataProjectsAPI = dataProjectsAPI.data;
+  let { dataProjects } = useLoaderData().results;
 
   const containerVariants = {
     hidden: {},
@@ -45,8 +45,7 @@ export default function Portfolio() {
           animate="visible"
           variants={containerVariants}
         >
-          {dataProjectsAPI.map((project) => {
-            console.log(project.attributes.images.data);
+          {dataProjects.data.map((project) => {
             return (
               <motion.div
                 initial="hidden"
@@ -57,7 +56,7 @@ export default function Portfolio() {
                 key={project.id}
               >
                 <Link to={`/project/${project.id}`} className="cursor-pointer">
-                  {project.attributes.images.data == null ? (
+                  {project.loadedImages[0] == undefined ? (
                     <ImageIcon
                       className=" text-white"
                       style={{
@@ -68,15 +67,14 @@ export default function Portfolio() {
                   ) : (
                     <img
                       className="object-cover rounded-lg border-[#dddddd] border"
-                      src={`${API_URL}${
-                        project.attributes.images?.data[0].attributes.formats
-                          .medium.url || ImageIcon
-                      }`}
+                      src={
+                        `${API_BASE_URL}${project.loadedImages[0]}` || ImageIcon
+                      }
                       alt=""
                     />
                   )}
                   <h1 className="decoration-1 font-light lg:text-2xl text-xl underline underline-offset-2 mb-3 sm:max-w-[500px] sm:max-h-[350px] max-w-[250px] max-h-[200px] tracking-[6px] text-center">
-                    {project.attributes.title}
+                    {project.title}
                   </h1>
                 </Link>
               </motion.div>
