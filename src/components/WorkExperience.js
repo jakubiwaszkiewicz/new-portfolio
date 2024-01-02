@@ -1,9 +1,8 @@
 import React from "react";
 import ExpCard from "./ExpCard";
-function WorkExperience({ expData }) {
-  const API_URL = process.env.REACT_APP_API_URL;
-  const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
+const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+function WorkExperience({ expData }) {
   return (
     <div>
       <div
@@ -24,18 +23,18 @@ function WorkExperience({ expData }) {
         <h1 className="sectionTitle">&nbsp;Experience</h1>
         <div
           className="
-                        relative
-                        w-full
-                        flex
-                        overflow-x-scroll
-                        overflow-y-hidden
-                        snap-x  
-                        snap-mandatory
-                        z-20
-                        scrollbar
-                        scrollbar-track-gray-400/20
-                        scrollbar-thumb-[#ffffff]
-                        mt-10"
+            relative
+            w-full
+            flex
+            overflow-x-scroll
+            overflow-y-hidden
+            snap-x  
+            snap-mandatory
+            z-20
+            scrollbar
+            scrollbar-track-gray-400/20
+            scrollbar-thumb-[#ffffff]
+            mt-10"
         >
           {expData.data.map((project) => (
             <ExpCard

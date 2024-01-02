@@ -4,6 +4,7 @@ import "./index.css";
 
 import {
   createBrowserRouter,
+  createHashRouter,
   RouterProvider,
   Outlet,
   defer,
@@ -58,7 +59,7 @@ const Layout = () => {
   );
 };
 
-const router = createBrowserRouter([
+const router = createHashRouter([
   {
     path: "/",
     element: <Layout />,
@@ -80,30 +81,14 @@ const router = createBrowserRouter([
             },
           });
 
-          // check if data is ok
-          if (!aboutData.ok) throw new Error(await aboutData.text());
-          if (!expData.ok) throw new Error(await expData.text());
-
+          if (!aboutData.ok || !expData.ok) {
+            throw new Error(
+              `Error! status: ${aboutData.status} || ${expData.status}`
+            );
+          }
           // parse data
           aboutData = await aboutData.json();
           expData = await expData.json();
-
-          // load images
-          await expData.data.forEach(async (project) => {
-            project.loadedImages = [];
-            for (let image of project.image) {
-              let loadedImage = await fetch(
-                `https://api.flotiq.com${image.dataUrl}`,
-                {
-                  headers: {
-                    "X-Auth-Token": API_TOKEN,
-                  },
-                }
-              );
-              let loadedImageData = await loadedImage.json();
-              project.loadedImages.push(loadedImageData.url);
-            }
-          });
 
           aboutData.data[0].loadedImages = [];
           for (let image of aboutData.data[0].photos) {
@@ -117,6 +102,22 @@ const router = createBrowserRouter([
             );
             let loadedImageData = await loadedImage.json();
             aboutData.data[0].loadedImages.push(loadedImageData.url);
+          }
+
+          for (let experience of expData.data) {
+            experience.loadedImages = [];
+            for (let image of experience.image) {
+              let loadedImage = await fetch(
+                `https://api.flotiq.com${image.dataUrl}`,
+                {
+                  headers: {
+                    "X-Auth-Token": API_TOKEN,
+                  },
+                }
+              );
+              let loadedImageData = await loadedImage.json();
+              experience.loadedImages.push(loadedImageData.url);
+            }
           }
 
           return defer({

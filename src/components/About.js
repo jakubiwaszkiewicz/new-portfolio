@@ -30,21 +30,21 @@ function About({ desc, photo }) {
           }}
           viewport={{ once: true }}
           className="
-                                lg:mb-10
-                                mb-5
-                                w-30
-                                h-30
-                                object-cover
-                                rounded-lg
-                                md:w-[450px]
-                                md:h-[500px]
-                                md:max-w-[300px]
-                                md:max-h-[350px]
-                                lg:max-w-[450px]
-                                lg:max-h-[500px]
-                                xl:w-[450px]
-                                xl:h-[500px]
-                                bg-black bg-opacity-50"
+            lg:mb-10
+            mb-5
+            w-30
+            h-30
+            object-cover
+            rounded-lg
+            md:w-[450px]
+            md:h-[500px]
+            md:max-w-[300px]
+            md:max-h-[350px]
+            lg:max-w-[450px]
+            lg:max-h-[500px]
+            xl:w-[450px]
+            xl:h-[500px]
+            bg-black bg-opacity-50"
         />
 
         <motion.div

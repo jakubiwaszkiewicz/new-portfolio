@@ -10,19 +10,14 @@ export default function Project() {
   const [mainImg, setMainImg] = useState(0);
   const { id } = useParams();
 
-  console.log("parameter " + id);
-
   let projectData = {};
-
-  console.log(id);
-  console.log(id);
 
   for (let project of dataProjects) {
     if (project.id === id) {
-      console.log(`${project.id} is the same as ${id}`);
       projectData = project;
     }
   }
+
   console.log("projectData");
   console.log(projectData);
 
@@ -110,7 +105,10 @@ export default function Project() {
           className="flex-1 flex flex-col gap-2 bg-black bg-opacity-50 lg:text-base text-sm h-fit p-5"
         >
           <h1 className="">{projectData.title}</h1>
-          {projectData.description}
+          <div
+            className="md:text-base text-sm text-justify"
+            dangerouslySetInnerHTML={{ __html: projectData.description }}
+          />
           <div className="info">
             <span>Technologies used: {projectData.technologies}</span>
           </div>
